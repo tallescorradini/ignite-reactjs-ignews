@@ -5,11 +5,17 @@ export const fauna = new Client({
   domain: "db.us.fauna.com",
 });
 
-interface User {
-  email: string;
-}
+type UserFauna = {
+  ref: {
+    id: string;
+  };
+  data: {
+    email: string;
+    stripe_customer_id: string;
+  };
+};
 
-export async function insertUser({ email }: User) {
+export async function insertUser(email: string) {
   await fauna.query(
     q.If(
       q.Not(q.Exists(q.Match(q.Index("user_by_email"), q.Casefold(email)))),
@@ -17,4 +23,28 @@ export async function insertUser({ email }: User) {
       q.Get(q.Match(q.Index("user_by_email"), q.Casefold(email)))
     )
   );
+}
+
+export async function updateUserStripeId(
+  userId: string,
+  stripeCustomerId: string
+) {
+  await fauna.query(
+    q.Update(q.Ref(q.Collection("users"), userId), {
+      data: {
+        stripe_customer_id: stripeCustomerId,
+      },
+    })
+  );
+}
+
+export async function getUserByEmail(email: string) {
+  const user = await fauna.query<UserFauna>(
+    q.Get(q.Match(q.Index("user_by_email"), q.Casefold(email)))
+  );
+  return {
+    id: user.ref.id,
+    email: user.data.email,
+    customerId: user.data.stripe_customer_id,
+  };
 }

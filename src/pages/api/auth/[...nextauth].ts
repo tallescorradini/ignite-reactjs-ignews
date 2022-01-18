@@ -15,7 +15,7 @@ export default NextAuth({
     async signIn({ user, account, profile }) {
       const { email } = user;
       try {
-        await insertUser({ email });
+        await insertUser(email);
         return true;
       } catch (e) {
         return true;
