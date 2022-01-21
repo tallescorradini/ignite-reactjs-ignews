@@ -1,5 +1,6 @@
-import { SignInButton } from "../SignInButton";
 import styles from "./style.module.scss";
+import { SignInButton } from "../SignInButton";
+import { NavigationLink } from "../NavigationLink";
 
 export function Header() {
   return (
@@ -9,10 +10,14 @@ export function Header() {
         <nav>
           <ul>
             <li>
-              <a className={styles.active}>Home</a>
+              <NavigationLink href="/" activeClassName={styles.active}>
+                <a>Home</a>
+              </NavigationLink>
             </li>
             <li>
-              <a>News</a>
+              <NavigationLink href="/posts" activeClassName={styles.active}>
+                <a>News</a>
+              </NavigationLink>
             </li>
           </ul>
         </nav>
