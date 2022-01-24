@@ -33,5 +33,22 @@ export async function getPosts() {
   return posts;
 }
 
-// // Or query for a specific document
-// const blogPost = await client.getByUID("blog_post", "hello-world");
+export async function getPost(slug: string) {
+  const response = await client.getByUID("post", slug);
+
+  const post = {
+    slug,
+    title: RichText.asText(response.data.title),
+    content: RichText.asHtml(response.data.content),
+    updatedAt: new Date(response.last_publication_date).toLocaleDateString(
+      "pt-BR",
+      {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      }
+    ),
+  };
+
+  return post;
+}

@@ -48,3 +48,20 @@ export async function getUserByEmail(email: string) {
     customerId: user.data.stripe_customer_id,
   };
 }
+
+export async function getActiveUserSubscription(email: string) {
+  return await fauna.query(
+    q.Get(
+      q.Intersection([
+        q.Match(
+          q.Index("subscription_by_user_ref"),
+          q.Select(
+            "ref",
+            q.Get(q.Match(q.Index("user_by_email"), q.Casefold(email)))
+          )
+        ),
+        q.Match(q.Index("subscription_by_status"), "active"),
+      ])
+    )
+  );
+}
