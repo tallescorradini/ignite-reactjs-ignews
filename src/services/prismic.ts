@@ -52,3 +52,23 @@ export async function getPost(slug: string) {
 
   return post;
 }
+
+export async function getPostPreview(slug: string) {
+  const response = await client.getByUID("post", slug);
+
+  const post = {
+    slug,
+    title: RichText.asText(response.data.title),
+    content: RichText.asHtml(response.data.content.splice(0, 3)),
+    updatedAt: new Date(response.last_publication_date).toLocaleDateString(
+      "pt-BR",
+      {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      }
+    ),
+  };
+
+  return post;
+}
